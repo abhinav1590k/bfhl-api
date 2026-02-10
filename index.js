@@ -103,25 +103,23 @@ app.post("/bfhl", async (req, res) => {
           throw new Error("AI expects a string");
 
         const response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
-          {
-            contents: [{ parts: [{ text: body.AI }] }]
-          }
-        );
+  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+  {
+    contents: [{ parts: [{ text: body.AI }] }]
+  }
+);
 
-        data =
-          response.data.candidates?.[0]?.content?.parts?.[0]?.text
-            ?.split(" ")[0] || "Unknown";
-        break;
+
+        const text =
+  response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+const match = text.match(/\b[A-Z][a-z]+/g);
+
+data = match ? match[match.length - 1] : "Unknown";
       }
 
-      default:
-        return res.status(400).json({
-          is_success: false,
-          message: "Invalid key"
-        });
+      
     }
-
     res.status(200).json({
       is_success: true,
       official_email: EMAIL,
